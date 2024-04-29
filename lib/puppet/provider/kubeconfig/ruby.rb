@@ -233,6 +233,9 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   end
 
   def changed?
+    Puppet.debug(self.to_s + ": " + "kubeconfig_content=#{kubeconfig_content}")
+    Puppet.debug(self.to_s + ": " + "kubeconfig_content.hash=#{kubeconfig_content.hash}")
+    Puppet.debug(self.to_s + ": " + "@kubeconfig_hash=#{@kubeconfig_hash}")
     kubeconfig_content.hash != @kubeconfig_hash
   end
 
@@ -252,6 +255,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
         begin
           data = Psych.load(File.read(resource[:path]))
         rescue Psych::Exception
+          Puppet.debug(self.to_s + ": " + "error reading #{resource[:path]}")
           data = {} # Handle broken files as if empty
         end
         data = {} unless data.is_a? Hash
